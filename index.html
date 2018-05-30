@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="refresh" content="2" > -->
     <title>Periodic Table</title>
     <script>
         const elementsArray = [
@@ -3494,611 +3495,391 @@
         ]
 
     </script>
-
+    <script src="velocity.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.0.6/fetch-jsonp.min.js"></script>
     <style>
-        body {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            font-family: sans-serif;
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .container {
-            width: auto;
-            margin: auto;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         .periodic-table {
             display: grid;
-            grid-template-columns: repeat(18, 50px);
-            grid-template-rows: repeat(7, 50px);
-            grid-gap: 10px;
-            margin: auto;
-            width: auto;
-            position: relative;
-            transition: transform 300ms;
-        }
-
-        .open .periodic-table {
-            transition: transform 300ms;
+            grid-template-columns: repeat(18, 1fr);
+            margin: 20px;
+            grid-gap: 5px;
+            min-width: 1000px;
         }
 
         .element {
-            border: 0;
-            /* border: 1px solid #ccc; */
-            height: 50px;
-            width: 50px;
-            display: block;
+            grid-row: var(--period);
+            grid-column: var(--group);
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            background-color: #eee;
             border-radius: 3px;
+            overflow: hidden;
             cursor: pointer;
-            background-image: radial-gradient(circle at center, #0083FF, #007AE5);
-            transition: box-shadow 300ms, transform 300ms, top 300ms, left 300ms;
-            transform: none;
             position: relative;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);
-            color: rgba(0, 0, 0, 0.75);
-            /* box-shadow:
-                inset 1px 1px 2px 1px rgba(255, 255, 255, 0.5),
-                inset -1px -1px 2px 1px rgba(0, 0, 0, 0.25);                 */
+            transition: all 300ms;
+
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+            box-shadow:
+                inset 1px 1px 1px rgba(255, 255, 255, 0.15);
+            
+            background-color: var(--bg-color);
+            background-image: linear-gradient(to bottom, var(--bg-color), var(--bg-color-dark));
+            border: 1px solid var(--bg-color-dark);
         }
 
-        .element:not(.open):hover,
-        .element:not(.open):focus {
-            outline: none;
-            box-shadow: 0 0 3px 3px hsla(210, 100%, 56%, 1);
-            transition: box-shadow 300ms;
-        }
+        .element span {position: relative;}
 
-        @keyframes breathe {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
+        .element:not(.open)::before {
+            --size: 0;
+            --gradient-color: #ccc;
 
-        .element::-moz-focus-inner {
-            outline: none;
-            border: none;
-        }
-
-        .element.he {
-            grid-column: 18;
-        }
-
-        .element.b,
-        .element.al {
-            grid-column: 13;
-        }
-
-        .outer {
+            content: '';
             position: absolute;
-            bottom: -100px;
-            left: 180px;
-            display: flex;
+            left: var(--x);
+            top: var(--y);
+            width: var(--size);
+            height: var(--size);
+            background: radial-gradient(circle closest-side, var(--gradient-color), transparent);
+            transform: translate(-50%, -50%);
+            transition: width .2s ease, height .2s ease;
         }
 
-        .outer:nth-of-type(2) {
-            bottom: -160px;
+        .element:not(.open):hover::before {
+            --size: 150%;
         }
 
-        .outer .element {
-            margin: 5px;
+        .element.nonmetal {
+            --bg-color: hsl(216, 86%, 76%);
+            --bg-color-dark: hsl(216, 86%, 66%);
+            --bg-color-darker: hsl(216, 86%, 46%);
         }
 
-        .outer .element:first-child {
-            margin-left: 0;
+        .element.nonmetal:not(.open)::before {
+            --gradient-color: hsl(216, 86%, 86%);
         }
 
-        .element.hf,
-        .element.rf {
-            grid-column: 4;
+        .element.metal {
+            --bg-color: hsl(240, 50%, 67%);
+            --bg-color-dark: hsl(240, 50%, 57%);
+            --bg-color-darker: hsl(240, 50%, 37%);
+        }
+
+        .element.metal:not(.open)::before {
+            --gradient-color: hsl(240, 50%, 77%);
+        }
+
+        .element.metalloid {
+            --bg-color: hsl(0, 0%, 80%);
+            --bg-color-dark: hsl(0, 0%, 70%);
+            --bg-color-darker: hsl(0, 0%, 50%);
+        }
+
+        .element.metalloid:not(.open)::before {
+            --gradient-color: hsl(0, 0%, 90%);
+        }
+
+        .element.noble {
+            --bg-color: hsl(180, 54%, 43%);
+            --bg-color-dark: hsl(180, 54%, 33%);
+            --bg-color-darker: hsl(180, 54%, 13%);
+        }
+
+        .element.noble:not(.open)::before {
+            --gradient-color: hsl(180, 54%, 53%);
+        }
+
+        .element.lanthanide {
+            --bg-color: hsl(35, 100%, 60%);
+            --bg-color-dark: hsl(35, 100%, 50%);
+            --bg-color-darker: hsl(35, 100%, 30%);
+        }
+
+        .element.lanthanide:not(.open)::before {
+            --gradient-color: hsl(35, 100%, 70%);
+        }
+
+        .element.actinide {
+            --bg-color: hsl(10, 100%, 60%);
+            --bg-color-dark: hsl(10, 100%, 50%);
+            --bg-color-darker: hsl(10, 100%, 30%);
+        }
+
+        .element.actinide:not(.open)::before {
+            --gradient-color: hsl(10, 100%, 70%);
         }
 
         .element.open {
+            border-radius: 50%;
+            transition: all 300ms ease-in;
             z-index: 9999;
+            height: 100px;
+            width: 100px;
+            overflow: visible;
             position: fixed;
-            top: 50%;
-            transform: scale(5);
-            transition: transform 300ms;
-            animation: bounce 2000ms infinite linear;
-            border-radius: 50%;
-            left: 15%;
-            box-shadow: none;
-            background-image: radial-gradient(circle at center, #1e90ff, #005cb2);
+            top: 50px;
+            left: calc(25vw - 150px);
+            transform: translateY(50%);
+            transition: all .2s ease;
+            background-image: radial-gradient(circle at center, var(--bg-color), var(--bg-color-darker));
+            border: none;
         }
 
-        .element::before,
-        .element::after {
+        .element.open::before {
             content: '';
-        }
-
-        .open.element::before {
-            width: 105%;
-            height: 10%;
-            border-radius: 50%;
-            background-color: #1e90ff;
             position: absolute;
-            bottom: -5px;
+            bottom: -25%;
             left: 0;
-            filter: blur(5px);
-            animation: bounce-shadow 2500ms infinite linear;
+            width: 100%;
+            height: 15px;
+            background: var(--bg-color-darker);
+            opacity: 0.75;
+            border-radius: 50%;
+            filter: blur(10px)
         }
 
-        .open .container::before {
-            content: '';
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 1;
-            z-index: 9999;
-            background-color: rgba(252, 243, 243, 0.97);
+            height: 100vh;
+            width: 100vw;
+            background: #fff;
+            opacity: 0;
+            z-index: 0;
+            transition: all 300ms;
+        }
+
+        .open .modal {
+            opacity: 0.95;
+            z-index: 999;
+            transition: all 300ms;
         }
 
         .details {
+            position: fixed;
+            top: 50px;
+            left: 60%;
+            transform: translateX(-50%);
+            padding: 10px;
+            border-radius: 3px;
+            z-index: 999;
+            width: 0;
+            height: 0;
+            overflow: hidden;
             opacity: 0;
-            position: absolute;
-            top: 50%;
-            left: 30%;
-            z-index: 99999;
-            width: auto;
-            height: auto;
-            max-width: 50%;
-            transform: scale(0);
-            transition: opacity 300ms, transform 300ms;
-            text-shadow: 0 2px 1px #eee;
-            color: #333;
+            outline: 1px solid red;
         }
 
         .open .details {
-            transform: scale(1) translateY(-50%);
+            width: 70vw;
+            height: 100%;
             opacity: 1;
-            transition: opacity 300ms, transform 300ms;
         }
 
-        .details h1 {
-            margin: auto;
-            display: inline-block;
+        .details .discovered-by,
+        .details .named-by {
+            color: #999;
         }
 
-        @keyframes bounces {
-            0% {
-                transform: translateY(-10px) scale(5)
-            }
-            50% {
-                transform: translateY(10px) scale(5)
-            }
-            100% {
-                transform: translateY(-10px) scale(5)
-            }
-        }
-
-        @keyframes bounce-shadows {
-            0% {
-                transform: translateY(5px);
-                filter: blur(10px);
-            }
-            50% {
-                transform: translateY(0);
-                filter: blur(5px);
-            }
-            100% {
-                transform: translateY(5px);
-                filter: blur(10px);
-            }
-        }
-
-        .details .icon svg {
-            max-width: 1rem;
-        }
-
-        .element.gas {
-            background-image: linear-gradient(to bottom right, #fa3, #f33);
-        }
-
-        .element.liquid {
-            background-image: linear-gradient(to bottom right, #3cf, #33f);
-        }
-
-        .element.solid {
-            background-image: linear-gradient(to bottom right, #edc, #ba9);
-        }
-
-        .open.element.gas {
-            background-image: radial-gradient(circle at center, #fa3, #f33);
-        }
-
-        .open.element.liquid {
-            background-image: radial-gradient(circle at center, #3cf, #33f);
-        }
-
-        .open.element.solid {
-            background-image: radial-gradient(circle at center, #edc, #dcb);
-        }
-
-        .element.gas::before {
-            background-color:#a33;
-        }
-        .element.liquid::before {
-            background-color:#33f;
-        }
-        .element.solid::before {
-            background-color:#555;
-        }
-
-        .popover {
-            min-height: 100px;
-            min-width: 200px;
-            max-width: 300px;
-            position: fixed;
-            background: #fafafa;
+        .details .summary {
+            padding: 10px;
+            border-left: 5px solid #ccc;
+            background-color: #eee;
             border-radius: 3px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            border: 1px solid #aaa;
-            z-index: 99;
-            transition: transform 300ms, opacity 300ms;
-            opacity: 0;
         }
 
-        .popover.open {
-            opacity: 1;
-        }
-
-        .popover.open:hover {
-            opacity: 0;
-        }
-
-        .popover::before {
-            content: '';
-            border-top: 10px solid #fafafa;
-            border-right: 10px solid transparent;
-            border-left: 10px solid transparent;
-            position: absolute;
-            bottom: -10px;
-            left: 10px;
-            z-index: 999;
-        }
-        
-        .popover::after {
-            content: '';
-            border-top: 11px solid #888;
-            border-right: 11px solid transparent;
-            border-left: 11px solid transparent;
-            position: absolute;
-            bottom: -11px;
-            left: 9px;
-        }
-
-        .popover header {
-            border-bottom: 1px solid #aaa;
-            background-image: linear-gradient(to bottom, #eee, #ccc);
-            border-radius: 3px 3px 0 0;
-        }
-
-        .popover__title {
-            margin: 0;
+        .details .button {
+            font-size: 1rem;
             padding: 10px;
+            background-color: crimson;
+            color: #fff;
+            border: none;
+            margin: 20px;
+            box-shadow: 0 3px 20px #ed2f55b3;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .details .button:active {
+            transform: scale(.9);
+        }
+
+        .details .contents {
+            overflow: scroll;
+            height: 100%;
+            margin-top: 20px;
+        }
+
+        .contents a {
             color: #333;
-            text-shadow: 0 1px 1px #fff;
+            background-image: linear-gradient(to bottom right, hsl(348,83.3%,87.1%), hsl(348,83.3%,77.1%));
+            background-size: 100% 10%;
+            background-repeat: no-repeat;
+            background-position: 0 100%;
+            text-decoration: none;
+            transition: background-size 300ms, 300ms;
         }
 
-        .popover article {
+        .contents a:hover {
+            background-size: 100% 100%;
+            transition: background-size 300ms, color 300ms;
+        }
+
+        .contents p {
             padding: 10px;
         }
 
-        .details iframe {
-            width: 100%;
-            min-height: 300px;
-            background: transparent;
+        .loader {
+            border: 3px solid transparent;
+            border-top-color: crimson;
+            border-radius: 50%;
+            height: 50px;
+            width: 50px;
+            margin: 20px auto;
+            animation: loading 1s infinite;
         }
+
+        @keyframes loading {
+            from {transform: rotate(0)}
+            to   {transform: rotate(360deg)}
+        }
+
+        .loader.done { display: none; }
     </style>
 </head>
 
 <body>
-    <div class="popover">
-        <header>
-            <h3 class="popover__title">ElementName</h3>
-        </header>
-        <article>
-            <p><b>Appearance:</b> <span class="appearance"></span></p>
-        </article>
+    <div class="modal"></div>
+    <div class="sidebar">
+        <div class="sidebar-inner">
+            <h1>From Wikipedia</h1>
+            <iframe src="#!" frameborder="0" id="wiki"></iframe>
+        </div>
     </div>
     <header class="header"></header>
     <main class="container">
-        <div class="periodic-table">
-            <button class="element h">H</button>
-            <button class="element he">He</button>
-            <button class="element ">Li</button>
-            <button class="element ">Be</button>
-            <button class="element b">B</button>
-            <button class="element ">C</button>
-            <button class="element ">N</button>
-            <button class="element ">O</button>
-            <button class="element ">F</button>
-            <button class="element ">Ne</button>
-            <button class="element ">Na</button>
-            <button class="element ">Mg</button>
-            <button class="element al">Al</button>
-            <button class="element ">Si</button>
-            <button class="element ">P</button>
-            <button class="element ">S</button>
-            <button class="element ">Cl</button>
-            <button class="element ">Ar</button>
-            <button class="element ">K</button>
-            <button class="element ">Ca</button>
-            <button class="element ">Sc</button>
-            <button class="element ">Ti</button>
-            <button class="element ">V</button>
-            <button class="element ">Cr</button>
-            <button class="element ">Mn</button>
-            <button class="element ">Fe</button>
-            <button class="element ">Co</button>
-            <button class="element ">Ni</button>
-            <button class="element ">Cu</button>
-            <button class="element ">Zn</button>
-            <button class="element ">Ga</button>
-            <button class="element ">Ge</button>
-            <button class="element ">As</button>
-            <button class="element ">Se</button>
-            <button class="element ">Br</button>
-            <button class="element ">Kr</button>
-            <button class="element ">Rb</button>
-            <button class="element ">Sr</button>
-            <button class="element ">Y</button>
-            <button class="element ">Zr</button>
-            <button class="element ">Nb</button>
-            <button class="element ">Mo</button>
-            <button class="element ">Tc</button>
-            <button class="element ">Ru</button>
-            <button class="element ">Rh</button>
-            <button class="element ">Pd</button>
-            <button class="element ">Ag</button>
-            <button class="element ">Cd</button>
-            <button class="element ">In</button>
-            <button class="element ">Sn</button>
-            <button class="element ">Sb</button>
-            <button class="element ">Te</button>
-            <button class="element ">I</button>
-            <button class="element ">Xe</button>
-            <button class="element ">Cs</button>
-            <button class="element ">Ba</button>
-            <div class="outer">
-
-                <button class="element ">La</button>
-                <button class="element ">Ce</button>
-                <button class="element ">Pr</button>
-                <button class="element ">Nd</button>
-                <button class="element ">Pm</button>
-                <button class="element ">Sm</button>
-                <button class="element ">Eu</button>
-                <button class="element ">Gd</button>
-                <button class="element ">Tb</button>
-                <button class="element ">Dy</button>
-                <button class="element ">Ho</button>
-                <button class="element ">Er</button>
-                <button class="element ">Tm</button>
-                <button class="element ">Yb</button>
-                <button class="element ">Lu</button>
-            </div>
-            <button class="element hf">Hf</button>
-            <button class="element ">Ta</button>
-            <button class="element ">W</button>
-            <button class="element ">Re</button>
-            <button class="element ">Os</button>
-            <button class="element ">Ir</button>
-            <button class="element ">Pt</button>
-            <button class="element ">Au</button>
-            <button class="element ">Hg</button>
-            <button class="element ">Tl</button>
-            <button class="element ">Pb</button>
-            <button class="element ">Bi</button>
-            <button class="element ">Po</button>
-            <button class="element ">At</button>
-            <button class="element ">Rn</button>
-            <button class="element ">Fr</button>
-            <button class="element ">Ra</button>
-            <div class="outer">
-                <button class="element ">Ac</button>
-                <button class="element ">Th</button>
-                <button class="element ">Pa</button>
-                <button class="element ">U</button>
-                <button class="element ">Np</button>
-                <button class="element ">Pu</button>
-                <button class="element ">Am</button>
-                <button class="element ">Cm</button>
-                <button class="element ">Bk</button>
-                <button class="element ">Cf</button>
-                <button class="element ">Es</button>
-                <button class="element ">Fm</button>
-                <button class="element ">Md</button>
-                <button class="element ">No</button>
-                <button class="element ">Lr</button>
-            </div>
-            <button class="element rf">Rf</button>
-            <button class="element ">Db</button>
-            <button class="element ">Sg</button>
-            <button class="element ">Bh</button>
-            <button class="element ">Hs</button>
-            <button class="element ">Mt</button>
-            <button class="element ">Ds</button>
-            <button class="element ">Rg</button>
-            <button class="element ">Cn</button>
-            <button class="element ">Nh</button>
-            <button class="element ">Fl</button>
-            <button class="element ">Mc</button>
-            <button class="element ">Lv</button>
-            <button class="element ">Ts</button>
-            <button class="element ">Og</button>
-        </div>
+        <div class="periodic-table"></div>
     </main>
     <div class="details">
         <div>
             <h1>Element Name</h1>
             <i class="icon"></i>
         </div>
-        <cite class="discovered-by"></cite>
+        <cite class="discovered-by"></cite><br>
+        <cite class="named-by"></cite>
         <p class="summary"></p>
-        <iframe id="iframe-mg" frameborder="0"></iframe>
+        <!-- <button class="button">Read More</button> -->
+        <div class="loader"></div>
+        <div class="contents"></div>
+        <!-- <iframe id="iframe-mg" frameborder="0"></iframe> -->
     </div>
     <script>
-        const elements = document.querySelectorAll('.element')
-            , details = document.querySelector('.details')
-            , elementName = document.querySelector('.details h1')
-            , discoverer = document.querySelector('.details .discovered-by')
-            , icon = document.querySelector('.details .icon')
-            , summary = document.querySelector('.details .summary')
-            , appearance = document.querySelector('.popover .appearance')
-            , popover = document.querySelector('.popover')
-            , iframe = document.getElementById('iframe-mg')
-            , phases = {
-                gas: `
-                <svg version="1.1" id="gas" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                    viewBox="0 0 365.447 365.447" style="enable-background:new 0 0 365.447 365.447;" xml:space="preserve">
-                    <g>
-                        <g>
-                            <path d="M306.069,189.427H7.5c-4.143,0-7.5-3.358-7.5-7.5s3.357-7.5,7.5-7.5h297.119c0.469-0.092,0.954-0.14,1.45-0.14
-                        c24.47,0,44.378-19.908,44.378-44.378S330.539,85.53,306.069,85.53s-44.378,19.908-44.378,44.378c0,4.142-3.357,7.5-7.5,7.5
-                        s-7.5-3.358-7.5-7.5c0-32.741,26.637-59.378,59.378-59.378s59.378,26.637,59.378,59.378c0,32.224-25.801,58.535-57.829,59.358
-                        C307.118,189.372,306.601,189.427,306.069,189.427z" />
-                        </g>
-                        <g>
-                            <path d="M152.283,137.479H7.5c-4.143,0-7.5-3.358-7.5-7.5s3.357-7.5,7.5-7.5h143.333c0.469-0.092,0.954-0.14,1.45-0.14
-                        c24.47,0,44.378-19.908,44.378-44.378s-19.908-44.378-44.378-44.378c-24.471,0-44.379,19.908-44.379,44.378
-                        c0,4.142-3.357,7.5-7.5,7.5s-7.5-3.358-7.5-7.5c0-32.741,26.638-59.378,59.379-59.378s59.378,26.637,59.378,59.378
-                        c0,32.224-25.801,58.535-57.829,59.358C153.332,137.423,152.814,137.479,152.283,137.479z" />
-                        </g>
-                        <g>
-                            <path d="M244.186,346.866c-32.741,0-59.379-26.637-59.379-59.378c0-4.142,3.357-7.5,7.5-7.5s7.5,3.358,7.5,7.5
-                        c0,24.47,19.908,44.378,44.379,44.378c24.47,0,44.378-19.908,44.378-44.378s-19.908-44.378-44.378-44.378H7.5
-                        c-4.143,0-7.5-3.358-7.5-7.5s3.357-7.5,7.5-7.5h236.686c32.741,0,59.378,26.637,59.378,59.378S276.927,346.866,244.186,346.866z"
-                            />
-                        </g>
-                    </g>
-                </svg>`,
-                liquid: `
-                <svg version="1.1" id="liquid" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                    width="371.409px" viewBox="0 0 371.409 371.409" style="enable-background:new 0 0 371.409 371.409;"
-                    xml:space="preserve">
-                    <g>
-                        <path d="M270.265,149.448c-36.107-47.124-70.38-78.948-73.439-141.372c0-1.836-0.612-3.06-1.836-4.284   c-0.612-3.06-3.672-4.896-6.732-3.06c-3.672,0-6.731,2.448-6.731,6.732c-77.112,83.232-207.468,294.372-43.452,354.959   c74.052,27.541,157.896-9.791,172.584-90.576C318.614,228.396,295.969,182.497,270.265,149.448z M138.686,323.256   c-17.748-10.404-28.764-31.211-34.272-49.572c-2.448-9.18-3.672-18.359-3.06-27.539c3.672-15.912,8.568-31.213,14.076-46.512   c3.06,13.463,9.18,26.928,17.748,36.719c19.584,21.422,59.364,34.273,70.38,61.201c6.732,16.523-19.584,30.6-30.6,34.271   C161.33,335.496,148.477,329.377,138.686,323.256z"></path>
-                    </g>
-                </svg>`,
-                solid: `
-                <svg version="1.1" id="solid" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                    viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
-                    <g>
-                        <g>
-                            <path d="M266.954,334.049c-0.523-5.498-5.412-9.533-10.902-9.006c-5.498,0.524-9.53,5.405-9.007,10.903    c1.497,15.721-21.111,51.162-41.891,59.82c-29.689,12.371-27.486,65.759-27.138,71.807c0.307,5.317,4.714,9.419,9.974,9.419    c0.191,0,0.383-0.005,0.576-0.016c5.511-0.313,9.726-5.036,9.418-10.546c-0.82-14.67,1.734-46.733,14.861-52.202    C240.597,402.665,269.421,359.953,266.954,334.049z"></path>
-                        </g>
-                    </g>
-                    <g>
-                        <g>
-                            <path d="M314.417,333.6c-5.189-1.886-10.928,0.791-12.814,5.98l-4,11c-1.888,5.19,0.79,10.928,5.98,12.815    c4.979,1.811,10.924-0.777,12.815-5.98l4-11C322.285,341.225,319.607,335.487,314.417,333.6z"></path>
-                        </g>
-                    </g>
-                    <g>
-                        <g>
-                            <path d="M502,0H10C4.478,0,0,4.477,0,10v491.997c0,5.523,4.478,10,10,10c0,0,491.993,0,492.001,0c5.227,0.141,9.999-4.6,9.999-10    V10C512,4.477,507.522,0,502,0z M266,20h102.657l58.881,68.975l-16.967,44.374L266,64.679V20z M20,20h226v45.91l-117.024,85.193    L20,117.933V20z M47.002,296.802l-3.809,195.194H20V138.839l101,30.743v53.111l-70.872,67.04    C48.181,291.575,47.054,294.122,47.002,296.802z M286.876,491.996c0.252-15.932,2.514-47.057,15.445-66.452    c3.063-4.595,1.822-10.804-2.773-13.867c-4.596-3.063-10.804-1.823-13.867,2.773c-15.917,23.875-18.582,59.518-18.829,77.546    H116.945c2.295-12.877,6.417-34.849,11.61-57.574c5.013-21.938,10.148-47.032,20.306-67.707    c9.083-18.486,28.901-27.657,43.377-41.147c16.343-15.232,28.945-35.196,33.55-57.191c5.573-26.624,39.316-40.717,62.359-47.671    l10.024,53.463c0.529,2.821,2.252,5.282,4.717,6.751c0.3,0.179,30.12,18.124,44.597,41.648    c14.004,22.763-13.535,55.304-10.516,79.801c1.379,11.185,8.7,19.19,15.23,27.835c14.881,19.698,31.084,39.646,42.241,61.792    H286.876z M416.14,491.996c-2.22-0.134-12.568-24.315-16.53-30.29c-10.581-15.956-22.15-31.219-33.673-46.498l26.669-4.341    c3.962-0.645,7.154-3.596,8.107-7.496l11-45c1.312-5.365-1.975-10.777-7.339-12.088c-5.367-1.314-10.777,1.975-12.089,7.339    l-9.428,38.568l-26.335,4.287c0.61-6.407,3.353-15.178,5.873-23.214c6.292-20.068,13.423-42.813,2.121-61.179    c-13.829-22.473-38.018-39.691-47.491-45.887l-11.196-59.713c-0.496-2.646-6.738-7.759-8.087-7.997l-37.504-21.309l-12.774-37.41    c-1.786-5.227-7.472-8.019-12.695-6.232c-5.227,1.785-8.017,7.468-6.232,12.695l14,41c0.79,2.312,2.399,4.256,4.523,5.463    l23.013,13.076c-13.502,5.078-30.227,13.106-43.338,24.948l-31.437-33.555c-3.776-4.031-10.104-4.237-14.135-0.46    c-4.03,3.776-4.236,10.104-0.461,14.134l32.968,35.188c-3.454,5.505-6.059,11.572-7.458,18.254    c-5.959,28.471-28.13,48.324-50.066,65.448c-4.859,3.793-9.449,7.377-13.682,11.032c-6.969,6.018-18.015,21.823-33.427,89.302    c-5.773,25.273-10.238,49.598-12.401,61.937H63.197l3.719-190.614l62.856-59.457c0,0,15.233,20.079,15.261,20.117    c3.162,4.168,9.683,5.206,14.011,1.923c4.4-3.338,5.261-9.611,1.923-14.011L141,223.635v-56.546l116.079-84.505l65.722,31.218    l-7.069,17.442c-2.074,5.119,0.393,10.95,5.512,13.024c4.909,1.989,10.946-0.383,13.024-5.511l6.63-16.359l63.752,30.282    l-18.452,91.34c-0.607,3.004,0.197,6.121,2.183,8.456l48.563,57.133l-1.943,128.237c-0.038,2.504,0.865,4.932,2.531,6.802    l42.17,47.349L416.14,491.996z M492,475.733l-36.942-41.479l1.844-121.656L492,297.492V475.733z M492,275.719l-42.182,18.154    l-43.055-50.652l18.808-93.1l22.77-59.549c1.307-3.419,0.642-7.28-1.735-10.064L394.953,20H492V275.719z"></path>
-                        </g>
-                    </g>
-                    <g>
-                        <g>
-                            <path d="M101,307.998c-5.522,0-10,4.477-10,10v23c0,5.523,4.478,10,10,10c5.522,0,10-4.477,10-10v-23    C111,312.475,106.522,307.998,101,307.998z"></path>
-                        </g>
-                    </g>
-                    <g>
-                        <g>
-                            <path d="M357.839,218.21l-8-44c-0.988-5.434-6.197-9.037-11.628-8.05c-5.434,0.988-9.037,6.194-8.05,11.628c0,0,7.991,43.952,8,44    c0.971,5.343,6.298,9.019,11.628,8.05C355.223,228.85,358.826,223.644,357.839,218.21z"></path>
-                        </g>
-                    </g>
-                </svg>`
-            }
+        const $  = document.querySelector.bind(document)
+            , $$ = document.querySelectorAll.bind(document)
+            , table = $('.periodic-table')
+            , btnDetails = $('.details .button')
+            , bodyBefore = $('.modal')
 
-        var findElement = symbol => elementsArray.find(element => element.symbol === symbol)
-        elements.forEach(element => {
-            var ourElement = findElement(element.innerHTML);
+        // btnDetails.addEventListener('click', function(e){
+        //     e.stopPropagation()
+        //     openSidebar()
+        // })
 
-            element.addEventListener('click', function (event) {
-                toggleDetails(this)
-            })
-
-            element.addEventListener('mousemove', function(e){
-                popover.classList.add('open')
-                movePopover(e)
-                updatePopoverContents(ourElement)
-            })
-
-            element.addEventListener('mouseleave', function(e){
-                popover.classList.remove('open')
-            })
-
-            element.classList.add(ourElement.phase.toLowerCase())
+        bodyBefore.addEventListener('click', function(e) {
+            toggleElement($('.element.open'))
         })
 
-        details.addEventListener('click', function (e) {
-            // toggleDetails(document.querySelector('.element.open'));
-        })
+        function renderElements() {
+            elementsArray.forEach(element => {
+                const button = document.createElement('button')
+                    , category = (element.category).replace(',', '').replace('unknown', '').split(' ')
 
-        function toggleDetails(element) {
-            element.classList.toggle('open')
-            document.body.classList.toggle('open')
+                button.innerHTML = `<span>${element.symbol}</span>`
+                button.classList.add(...category, 'element')                    
 
-            var ourElement = findElement(element.innerHTML)
+                button.style.setProperty('--group', element.xpos)
+                button.style.setProperty('--period', element.ypos)
+                button.setAttribute('id', element.name)
+                button.setAttribute('data-element', element.symbol)
+                table.appendChild(button)
 
-            elementName.innerHTML = ourElement.name
-            discoverer.innerHTML = ourElement.discovered_by
-
-            const phase = ourElement.phase.toLowerCase();
-            icon.innerHTML = phases[phase]
-            summary.innerHTML = ourElement.summary
-            iframe.src = ourElement.source.replace('en', 'm')
-
-            const page = ourElement.source.split('https://en.wikipedia.org/wiki/')[1]
-            generateWikiContent(page)
-
-            if(!document.body.classList.contains('open')) {
-                iframe.src = ''
-            }
-        }
-
-        function movePopover(e){
-            const rect = popover.getBoundingClientRect()
-                , height = rect.height
-
-            popover.style.transform = `
-                translateX(${e.pageX - 30}px) translateY(${e.pageY - (height + 50)}px)
-            `
-        }
-
-        function updatePopoverContents(element) {
-            const title = popover.querySelector('.popover__title')
-
-            title.innerHTML = element.name
-            appearance.innerHTML = element.appearance
-        }
-
-        function generateWikiContent(page) {
-            let header = new Headers({
-                'Access-Control-Allow-Origin':'*',
-                'Content-Type': 'multipart/form-data'
+                addEventListeners(button)
             });
-
-            // fetch(`http://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text&section=0&page=${page}&callback=?`, 
-            //     {
-            //         mode: 'cors',
-            //         headers: header,
-            //         method: 'GET'
-            //     })
-            //     .then(data => data.text())
-            //     .then(data => console.log(data))
-
         }
+
+        function moveGradient(element, mouseEvent) {
+            const x = mouseEvent.pageX - element.offsetLeft
+                , y = mouseEvent.pageY - element.offsetTop
+
+            element.style.setProperty('--x', `${x}px`)
+            element.style.setProperty('--y', `${y}px`)
+        }
+
+        function toggleElement(element) {
+            element.classList.toggle('open')
+
+            $('body').classList.toggle('open')
+
+            $('.details .loader').classList.remove('done')
+            $('.details .contents').innerHTML = ''
+        }
+
+        function updateDetails(symbol) {
+            const element = elementsArray.find(element => element.symbol === symbol)
+
+            $('.details h1').innerHTML = element.name
+            $('.details .discovered-by').innerHTML = element.discovered_by
+            $('.details .named-by').innerHTML = element.named_by
+            $('.details .summary').innerHTML = element.summary
+        }
+
+        function printWiki() {
+            // $('.sidebar').classList.add('open')
+
+            console.log($('.element.open').dataset['element'])
+            const elementInner = $('.element.open').dataset['element']
+                , els = elementsArray.find(element => element.symbol === elementInner)
+                , src = els.source
+            
+            fetchWikipediaPage(els)
+                .then(data => data.json())
+                .then(data => renderWiki(data.parse.text))
+        }
+
+        function addEventListeners(button) {
+            button.addEventListener('mousemove', e => moveGradient(e.target, e))
+            button.addEventListener('click', function(e){
+                toggleElement(this)
+                $('.details').classList.add('open')
+                updateDetails(this.dataset['element'])
+                printWiki()
+            })
+        }
+
+        function fetchWikipediaPage(element) {
+            const url = `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(element.name)}&format=json&formatversion=2`
+            return fetchJsonp(url)
+        }
+
+        function renderWiki(tex) {
+            $('.details .loader').classList.add('done')
+            $('.details .contents').innerHTML = tex
+        }
+
+        renderElements()
     </script>
 </body>
 
