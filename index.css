@@ -70,6 +70,10 @@ body {
     --size: 150%;
 }
 
+.element:focus {
+    outline: none;
+}
+
 .element.nonmetal {
     --bg-color: hsl(216, 86%, 76%);
     --bg-color-dark: hsl(216, 86%, 66%);
