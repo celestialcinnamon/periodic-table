@@ -474,3 +474,22 @@ h4, h5, h6 {
 .popover__body {
     padding: 10px;
 }
+
+
+/* #region index-2*/
+
+/* Required */
+img.colorify:not(.visible) {
+    opacity: 0;
+    filter: blur(3px);
+  }
+  
+  img.colorify:not(.all-loaded).all-not-loaded {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
+  }
+
+/* #endregion */

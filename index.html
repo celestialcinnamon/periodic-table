@@ -10,36 +10,277 @@
 
     <script src="elements.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.0.6/fetch-jsonp.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet"> 
-    <link href="index.css" rel="stylesheet">   
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rokkitt" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat';
+            background-color: #eee;
+        }
+
+        .wrapper {
+            width: 100%;
+            height: 100%;
+            clear: both;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(auto, 500px) 1fr;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ccc;
+            max-height: 100vh;
+        }
+
+        .sidebar__header {
+            flex: none;
+            height: 50px;
+            background-color: #fafafa;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar__title {
+            font-size: 1.5rem;
+            font-weight: lighter;
+            padding: 5px 10px;
+        }
+
+        .element-list {
+            list-style-type: none;
+            padding: none;
+            overflow: auto;
+            flex: 1;
+        }
+
+        .element-item {
+            max-height: 100px;
+            border-bottom: 1px solid #ccc;
+            background-color: #ddd;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .element-item:hover,
+        .element-item:focus {
+            background-color: #eee;
+            outline: none;
+        }
+
+        .element-item.selected {
+            background-color: #00aaff70;
+            border: 1px solid #00aaff;
+        }
+
+        .element-image {
+            display: flex;
+            font-size: 1rem;
+        }
+
+        .element-image__figure {
+            min-width: 100px;
+            min-height: 100px;
+            background-color: #ccc;
+        }
+
+        .element-image__caption {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .element__name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .element__appearance {
+            font-size: 0.9rem;
+            opacity: 0.5;
+        }
+
+        .element-cover {
+            background-color: #000;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 250px);
+            background-image: url(https://api.adorable.io/avatars/250/Hydrogen.png);
+            background-position: center;
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 500px;
+            width: calc(100vw - 500px);
+            z-index: 1;
+        }
+
+        .element-card {
+            width: 90%;
+            background: #fafafa;
+            margin: 250px auto 50px;
+            z-index: 2;
+            position: relative;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .main {
+            max-height: 100vh;
+            overflow: auto;
+        }
+
+        .element__header {
+            padding: 20px;
+        }
+
+        .element__name--main {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .element__name--symbol {
+            opacity: 0.5;
+            font-size: .75em; /*25% smaller than .element__name--main; we use `em`*/
+        }
+
+        .element__appearance--main {
+            padding: 20px;
+            color: #555;
+        }
+
+        .fact-box {
+            border-top: 1px solid #fa5;
+            border-bottom: 1px solid #fa5;
+            background-color: #ffaa5536;
+            position: relative;
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .fact-box__header {
+            position: absolute;
+            top: -1.2rem;
+            left: 20px;
+            background: #fa5;
+            color: #fff;
+            padding: 10px;
+            border-radius: 3px;
+        }
+
+        .element__article {
+            font-family: 'Rokkitt';
+            padding: 20px;
+        }
+
+        .element__article p {
+            margin-bottom: 20px;
+            text-indent: 2rem;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="modal"></div>
-    <header class="header"></header>
-    <main class="container">
-        <div class="periodic-table"></div>
-    </main>
-    <div class="details">
-        <div>
-            <h1>Element Name</h1>
-            <i class="icon"></i>
-        </div>
-        <cite class="discovered-by"></cite><br>
-        <cite class="named-by"></cite>
-        <!-- <p class="summary"></p> -->
-        <!-- <button class="button">Read More</button> -->
-        <div class="loader"></div>
-        <div class="contents"></div>
-        <!-- <iframe id="iframe-mg" frameborder="0"></iframe> -->
+    <div class="wrapper grid">
+        <aside class="sidebar">
+            <header class="sidebar__header">
+                <h1 class="sidebar__title">Elements</h1>
+            </header>
+            <ul class="element-list js-element-list"></ul>
+        </aside>
+        <main class="main">
+            <div class="element-cover js-element-cover"></div>
+            <article class="element-card">
+                <header class="element__header">
+                    <h1 class="element__name--main"><span class="js-element-name"></span> <span class="element__name--symbol js-element-symbol"></span></h1>
+                </header>
+                <p class="element__appearance--main js-element-appearance"></p>
+                <aside class="fact-box">
+                    <span class="fact-box__header">Fact Box</span>
+                    <div class="loader" style="border-color:#fa55; border-top-color: #fa5"></div>
+                </aside>
+                <section class="element__article js-element-history">
+                </section>
+            </article>
+        </main>
     </div>
-    <div class="popover">
-        <div class="popover__header">
-            <h3 class="popover__title"></h3>
-        </div>
-        <div class="popover__body"></div>
-    </div>
-    <script src="index.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.90/jsrender.js"></script>
+    <script src="./elements-new.js"></script>
+    <script id="element-item--template" type="text/x-jsrender">
+        <li class="element-item" role="button" tabindex="0" data-atomic-number="{{:atomicNumber}}">
+            <figure class="element-image">
+                <img src="https://api.adorable.io/avatars/100/{{:elementName}}.png" alt="{{:elementName}} ({{:elementSymbol}})" class="element-image__figure">
+                <figcaption class="element-image__caption">
+                    <h3 class="element__name"><sup>{{:atomicNumber}}</sup> {{:elementName}} ({{:elementSymbol}})</h3>
+                    <p class="element__appearance">{{:elementAppearance}}</p>
+                </figcaption>
+            </figure>
+        </li>
+    </script>
+    <script>
+            const $ = window.jsrender
+                , template = jsrender.templates(document.getElementById('element-item--template'))
+    
+            elements2
+                // .filter(element => !!element.appearance)
+                .forEach(element => {
+                const info = {
+                    elementName: element.name,
+                    elementSymbol: element.symbol,
+                    elementAppearance: element.appearance.length < 100 ? element.appearance : '',
+                    atomicNumber: element.atomic_number
+                }
+    
+                const renderedCard = template.render(info)
+                document.querySelector('.js-element-list').innerHTML += renderedCard
+            });
+
+            document
+                .querySelectorAll('.element-item')
+                .forEach(item => 
+                    item.addEventListener('click', function(event) {
+                        changeSelected(this)
+                        changeMainView(this.dataset['atomicNumber'])
+                    })
+                )
+
+            function changeMainView(atomicNumber) {
+                const elementCover      = document.querySelector('.js-element-cover')
+                    , elementName       = document.querySelector('.js-element-name')
+                    , elementSymbol     = document.querySelector('.js-element-symbol')
+                    , elementAppearance = document.querySelector('.js-element-appearance')
+                    , elementHistory    = document.querySelector('.js-element-history')
+
+                const element = elements2.find(element => element.atomic_number === parseInt(atomicNumber))
+
+                if(element == null)
+                    return;
+
+                elementCover.style.backgroundImage = `url('https://api.adorable.io/avatars/250/${element.name}.png')`
+                elementName.innerHTML = element.name
+                elementSymbol.innerHTML = element.symbol
+                elementAppearance.innerHTML = element.appearance
+                elementHistory.innerHTML = element.history.split('\n\n').map(str => `<p>${str}</p>`).join('')
+            }
+
+            function changeSelected(element) {
+                const selected = document.querySelector('.element-item.selected')
+
+                if(selected)
+                    selected.classList.remove('selected')
+
+                element.classList.add('selected')
+            }
+
+            document.querySelector('[data-atomic-number="1"]').click()
+        </script>
 </body>
 
 </html>

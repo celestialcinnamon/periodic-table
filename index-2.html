@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="refresh" content="2" > -->
+    <title>Periodic Table</title>
+
+    <script src="elements.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.0.6/fetch-jsonp.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet"> 
+    <link href="index.css" rel="stylesheet">
+    <style>
+        .cover {
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: auto;
+        }
+        
+        .cover .bg {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 0% 100%);
+            background-image: url(https://wallpapercave.com/wp/mtHN9DI.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cover-inner {
+            position: absolute;
+            top: 70%;
+            right: 0;
+            text-align: right;
+            margin: 0 30px;
+        }
+
+        .cover-inner h1 {
+            background-color: #ff0;
+            color: #000;
+            padding: 10px;
+            text-align: right;
+            width: auto;
+            display: inline-block;
+        }
+
+        .cover-inner p {
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-auto-rows: minmax(200px, auto);
+            grid-auto-flow: dense;
+        }
+
+        .card {
+            box-shadow: 
+                inset 2px 3px 3px rgba(255, 255, 255, 0.5),
+                2px 3px 3px rgba(0, 0, 0, 0.25);
+            color: rgba(0, 0, 0, 0.75);
+            background: #eee;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .card__header .element-icon {
+            border-radius: 50%;
+            overflow: hidden;
+            width: 75px;
+            height: 75px;
+            border: 3px solid #fff;
+            box-shadow: 0 0 1px #000;
+            margin: 5px;
+        }
+        .card__header .wrapper {
+            flex: 1;
+        }
+
+        .card__header .caption {
+            display: flex;
+        }
+
+        .card__header .element-name {
+            flex: 2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .card__header sup {
+            flex: 1;
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+
+        .card__body.padded {
+            padding: 10px 10px 20px;
+            /* display: none; */
+        }
+
+        .main {
+            padding: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="cover">
+        <div class="bg"></div>
+        <div class="cover-inner">
+            <h1>Periodic Table of Elements</h1>
+            <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+        </div>
+    </header>
+    <main class="main">
+        <h2>Finished Elements</h2>
+        <div class="grid js-elements"></div>
+    </main>
+
+    <script src="./color-thief.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.90/jsrender.js"></script>
+    <script src="./elements-new.js"></script>
+    <script type="text/x-jsrender" id="card-template">
+        <div class="card">
+            <figure class="card__header">
+                <div class="wrappers">
+                    <img src="https://api.adorable.io/avatars/75/{{:elementNameLower}}.png" title="{{:elementName}} in its natural habitat." alt="{{:elementName}} in its natural habitat" class="element-icon">
+                </div>
+                <div class="wrapper caption">
+                    <figcaption class="element-name">{{:elementName}}</figcaption><sup>{{:atomicNumber}}</sup>
+                </div>
+            </figure>
+            <div class="card__body {{:padded}}">{{:content}}</div>
+        </div>
+    </script>
+    <script>
+        const $ = window.jsrender
+            , template = jsrender.templates(document.getElementById('card-template'))
+
+        elements2
+            // .filter(element => !!element.appearance)
+            .forEach(element => {
+            const info = {
+                elementName: element.name,
+                elementNameLower: element.name.toLowerCase(),
+                content: element.appearance,
+                atomicNumber: element.atomic_number,
+                padded: !!element.appearance? 'padded' : ''
+            }
+
+            const renderedCard = template.render(info)
+            document.querySelector('.js-elements').innerHTML += renderedCard
+        });
+    </script>
+</body>
+
+</html>

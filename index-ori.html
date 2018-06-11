@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="refresh" content="2" > -->
+    <title>Periodic Table</title>
+
+    <script src="elements.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.0.6/fetch-jsonp.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet"> 
+    <link href="index.css" rel="stylesheet">   
+</head>
+
+<body>
+    <div class="modal"></div>
+    <a href="./index-2.html" style="z-index: 99999999999; position: relative">Go to version 2</a>
+    <header class="header"></header>
+    <main class="container">
+        <div class="periodic-table"></div>
+    </main>
+    <div class="details">
+        <div>
+            <h1>Element Name</h1>
+            <i class="icon"></i>
+        </div>
+        <cite class="discovered-by"></cite><br>
+        <cite class="named-by"></cite>
+        <!-- <p class="summary"></p> -->
+        <!-- <button class="button">Read More</button> -->
+        <div class="loader"></div>
+        <div class="contents"></div>
+        <!-- <iframe id="iframe-mg" frameborder="0"></iframe> -->
+    </div>
+    <div class="popover">
+        <div class="popover__header">
+            <h3 class="popover__title"></h3>
+        </div>
+        <div class="popover__body"></div>
+    </div>
+    <script src="index.js"></script>
+</body>
+
+</html>
