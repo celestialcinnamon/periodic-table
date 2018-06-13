@@ -31,15 +31,31 @@
             background-color: #fff;
         }
 
-        code, pre {
+        article:target {
+            animation: attention 2s;
+        }
+
+        @keyframes attention {
+            from {
+                background-color: #fc3;
+            }
+            to {
+                background-color: initial;
+            }
+        }
+
+        code,
+        pre {
             font-family: 'Overpass Mono', monospace;
             color: #333;
         }
 
         .banner {
             width: 100%;
-            background: #ff416c; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ff416c, #ff4b2b); /* Chrome 10-25, Safari 5.1-6 */
+            background: #ff416c;
+            /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #ff416c, #ff4b2b);
+            /* Chrome 10-25, Safari 5.1-6 */
             background: linear-gradient(to right, #ff416c, #ff4b2b);
             padding: 20px;
             padding-top: 100px;
@@ -114,6 +130,7 @@
 
         .method>p {
             margin: 10px 10px 0;
+            padding-bottom: 10px;
         }
 
         .method>.warning {
@@ -138,6 +155,20 @@
             color: #fffd;
             font-weight: bold;
         }
+
+
+
+        .kw {
+            color: #95f;
+        }
+
+        .var {
+            color: #339;
+        }
+
+        .class {
+            color: #3af;
+        }
     </style>
 </head>
 
@@ -155,7 +186,9 @@
                 Description
             </h2>
         </header>
-        <p>The <code>ChemicalElement</code> class represents every chemical element in the periodic table, and provides utility functions for searching elements on demand.</p>
+        <p>The
+            <code>ChemicalElement</code> class represents every chemical element in the periodic table, and provides utility functions for searching
+            elements on demand.</p>
     </section>
 
     <section class="spec-section">
@@ -166,13 +199,181 @@
             <li class="method-item">
                 <article class="method">
                     <header>
-                        <h3><code><span class="kw">private</span> ChemicalElement()</code><br><code><span class="kw">private</span> ChemicalElement(<span class="kw">int</span> <span class="var">atomicNumber</span>)</code></h3>
+                        <h3>
+                            <code><span class="kw">private</span> ChemicalElement()</code>
+                            <br>
+                            <code><span class="kw">private</span> ChemicalElement(<span class="kw">int</span> <span class="var">atomicNumber</span>)</code>
+                        </h3>
                     </header>
-                    <p>These constructors can only be accessed by members of the same class, that is, the <code>findBy*()</code> functions. See <a href="#static-methods">static methods</a> for details.</p>
+                    <p>These constructors can only be accessed by members of the same class, that is, the
+                        <code>findBy*()</code> functions. See
+                        <a href="#static-methods">static methods</a> for details.</p>
                     <aside class="warning">
                         <header>Warning</header>
-                        <p>Calling the constructor with no parameters must be followed by a call to <code>ChemicalElement .setAtomicNumber()</code> to initialize the object.</p>
+                        <p>Calling the constructor with no parameters must be followed by a call to
+                            <a href="#setAtomicNumber">
+                                <code>ChemicalElement .setAtomicNumber()</code>
+                            </a> to initialize the object.</p>
                     </aside>
+                </article>
+            </li>
+        </ul>
+    </section>
+    <section class="spec-section">
+        <header>
+            <h2>Private Methods</h2>
+        </header>
+        <ul class="method-list">
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">private</span> setAtomicNumber()</code>
+                        </h3>
+                    </header>
+                    <p>Sets this object's atomic number and reinitializes the object.</p>
+                </article>
+            </li>
+        </ul>
+    </section>
+
+    <section class="spec-section">
+        <header>
+            <h2>Public Methods</h2>
+        </header>
+        <ul class="method-list">
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getAtomicNumber()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getName()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getSymbol()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getPlaces()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getHistory()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getNameOrigin()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getUses()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getDangers()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getDiscoveryYear()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">public</span> getDiscoverers()</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+        </ul>
+    </section>
+
+    <section class="spec-section">
+        <header>
+            <h2>Static Methods</h2>
+        </header>
+        <ul class="method-list">
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">private</span> findByNumber(<code><span class="kw">int</span> <span class="var">atomicNumber</span></code>)</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">private</span> findByName(<code><span class="class">String</span> <span class="var">name</span></code>)</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">private</span> findBySymbol(<code><span class="class">String</span> <span class="var">symbol</span></code>)</code>
+                        </h3>
+                    </header>
+                </article>
+            </li>
+            <li class="method-item">
+                <article class="method" id="setAtomicNumber">
+                    <header>
+                        <h3>
+                            <code><span class="kw">private</span> findByElectronConf(<code><span class="kw">int</span>[] <span class="var">electronConfiguration</span></code>)</code>
+                        </h3>
+                    </header>
                 </article>
             </li>
         </ul>
