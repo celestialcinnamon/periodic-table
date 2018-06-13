@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Class Specifications - Quantarks™</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rokkitt" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Overpass+Mono" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            font-family: 'Montserrat';
+            color: #555;
+            background-color: #fff;
+        }
+
+        code, pre {
+            font-family: 'Overpass Mono', monospace;
+            color: #333;
+        }
+
+        .banner {
+            width: 100%;
+            background: #ff416c; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #ff416c, #ff4b2b); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            padding: 20px;
+            padding-top: 100px;
+            color: rgba(255, 255, 255, 0.95) !important;
+            margin-bottom: 50px;
+        }
+
+
+        a {
+            color: #ff416c;
+            text-decoration: none;
+            background-image: linear-gradient(to right, #ff416c, #ff4b2b);
+            background-size: 100% 20%;
+            background-repeat: no-repeat;
+            background-position: bottom center;
+            transition: background-size 300ms;
+            padding: 0 5px;
+            cursor: pointer;
+        }
+
+        a:hover {
+            color: rgba(255, 255, 255, 0.95);
+            background-size: 100% 100%;
+            transition: background-size 300ms;
+        }
+
+        .site-title {
+            font-size: 1.2rem;
+        }
+
+        .spec-subject {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: bold;
+        }
+
+        .spec-section {
+            margin: 25px auto;
+            width: 75%;
+        }
+
+        .spec-section>header {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+        }
+
+        .spec-section p {
+            text-indent: 2rem;
+        }
+
+        .method-list {
+            padding-left: 40px;
+            list-style-type: none;
+        }
+
+        .method-item {
+            display: block;
+            margin: 10px auto;
+        }
+
+        .method {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .method>header {
+            padding: 5px 10px;
+            background-color: #fafafa;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .method>p {
+            margin: 10px 10px 0;
+        }
+
+        .method>.warning {
+            border-top: 1px solid #fca;
+            border-bottom: 1px solid #fca;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 204, 170, 0.25);
+            position: relative;
+            padding: 10px;
+            padding-top: 25px;
+        }
+
+        .method>.warning>header {
+            background-color: #fa5;
+            padding: 5px;
+            border-radius: 5px;
+            position: absolute;
+            top: 0;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #fffd;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="banner">
+        <small class="site-title">Quantarks™</small>
+        <h1>
+            Class Spec:
+            <code class="spec-subject">ChemicalElement</code> class.
+        </h1>
+    </header>
+    <section class="spec-section">
+        <header>
+            <h2>
+                Description
+            </h2>
+        </header>
+        <p>The <code>ChemicalElement</code> class represents every chemical element in the periodic table, and provides utility functions for searching elements on demand.</p>
+    </section>
+
+    <section class="spec-section">
+        <header>
+            <h2>Constructors</h2>
+        </header>
+        <ul class="method-list">
+            <li class="method-item">
+                <article class="method">
+                    <header>
+                        <h3><code><span class="kw">private</span> ChemicalElement()</code><br><code><span class="kw">private</span> ChemicalElement(<span class="kw">int</span> <span class="var">atomicNumber</span>)</code></h3>
+                    </header>
+                    <p>These constructors can only be accessed by members of the same class, that is, the <code>findBy*()</code> functions. See <a href="#static-methods">static methods</a> for details.</p>
+                    <aside class="warning">
+                        <header>Warning</header>
+                        <p>Calling the constructor with no parameters must be followed by a call to <code>ChemicalElement .setAtomicNumber()</code> to initialize the object.</p>
+                    </aside>
+                </article>
+            </li>
+        </ul>
+    </section>
+</body>
+
+</html>
